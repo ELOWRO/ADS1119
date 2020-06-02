@@ -1,0 +1,54 @@
+#######################################
+# (c) 2020 Oktawian Chojnacki <oktawian@elowro.com>
+#######################################
+
+#######################################
+# Syntax Coloring Map
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+ADS1119	                KEYWORD1
+ADS1119Config           KEYWORD1
+ADS1119MuxConfiguration KEYWORD1
+ADS1119RegisterToRead   KEYWORD1
+Gain                    KEYWORD1
+DataRate                KEYWORD1
+ConversionMode          KEYWORD1
+VoltageReferenceSource  KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin	                    KEYWORD2
+performOffsetCalibration	KEYWORD2
+readVoltage	                KEYWORD2
+powerDown	                KEYWORD2
+reset	                    KEYWORD2
+readTwoBytes                KEYWORD2
+
+######################################
+# Constants (LITERAL1)
+#######################################
+ADS1119_DEFAULT_ADDRESS	            LITERAL1
+ADS1119_MUX_P_AIN0_N_AIN1	        LITERAL1
+ADS1119_MUX_P_AIN2_N_AIN3	        LITERAL1
+ADS1119_MUX_P_AIN1_N_AIN2	        LITERAL1
+ADS1119_MUX_P_AIN0_N_AGND	        LITERAL1
+ADS1119_MUX_P_AIN1_N_AGND	        LITERAL1
+ADS1119_MUX_P_AIN2_N_AGND	        LITERAL1
+ADS1119_MUX_P_AIN3_N_AGND	        LITERAL1
+ADS1119_MUX_SHORTED_H_AVDD	        LITERAL1
+ADS1119_RANGE                       LITERAL1
+ADS1119_INTERNAL_REFERENCE_VOLTAGE  LITERAL1
+
+#######################################
+# Built-In Variables (LITERAL2)
+#######################################
+mux                         LITERAL2
+gain                        LITERAL2
+dataRate                    LITERAL2
+conversionMode              LITERAL2
+voltageReference            LITERAL2
+externalReferenceVoltage    LITERAL2
