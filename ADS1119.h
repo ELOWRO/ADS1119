@@ -31,7 +31,7 @@
  */
 
 #ifndef ADS1119_h
-#define ADS11189_h
+#define ADS1119_h
 
 #include "Arduino.h"
 #include <Wire.h>
