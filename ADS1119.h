@@ -75,6 +75,11 @@ enum struct ADS1119RegisterToRead: uint8_t {
 	status = 0B1
 };
 
+enum struct ADS1119InputMode: uint8_t {
+	SINGLE_ENDED = 0B0,
+	DIFFERENTIAL = 0B1
+};
+
 /**
 	ADS1119Configuration
 	@author Oktawian Chojnacki <oktawian@elowro.com>
@@ -136,6 +141,22 @@ public:
 	*/
 	void begin(ADS1119Configuration *config, TwoWire *theWire = &Wire);
 
+
+	/*
+	By using the ADS1119 inputs in single ended ADC mode	
+	*/
+	void configADCSingleEnded();
+
+	/*
+	By using the ADS1119 inputs in differential mode	
+	*/
+	void configADCDifferential();
+	
+	/*
+	For selecting ADS1119 INPUT channel according the ADC Input configuration mode.	
+	*/
+	void selectChannel(uint8_t channel);
+
 	/**
 	Will perform conversion and save it as internal offset.
 	Make sure the input being measure is at VREF!
@@ -188,6 +209,7 @@ private:
 
 	uint16_t read();
 	ADS1119Configuration *config;
+	ADS1119InputMode mode;
 };
 
 #endif

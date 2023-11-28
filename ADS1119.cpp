@@ -37,6 +37,7 @@
 ADS1119::ADS1119(uint8_t address) 
 {
     _address = address;
+    this->mode = ADS1119InputMode::SINGLE_ENDED;
 }
 
 void ADS1119::begin(ADS1119Configuration *config, TwoWire *theWire) 
@@ -44,6 +45,59 @@ void ADS1119::begin(ADS1119Configuration *config, TwoWire *theWire)
     _i2c = theWire;
     _i2c->begin();
     this->config = config;
+}
+
+void ADS1119::configADCSingleEnded()
+{
+    this->mode = ADS1119InputMode::SINGLE_ENDED;
+}
+
+void ADS1119::configADCDifferential()
+{
+    this->mode = ADS1119InputMode::DIFFERENTIAL;
+}
+
+void ADS1119::selectChannel(uint8_t channel)
+{
+    if (this->mode == ADS1119InputMode::SINGLE_ENDED)
+    {
+        switch (channel)
+        {
+        case 0:
+            this->config->mux = ADS1119MuxConfiguration::positiveAIN0negativeAGND;
+            break;
+        case 1:
+            this->config->mux = ADS1119MuxConfiguration::positiveAIN1negativeGND;
+            break;
+        case 2:
+            this->config->mux = ADS1119MuxConfiguration::positiveAIN2negativeAGND;
+            break;
+        case 3:
+            this->config->mux = ADS1119MuxConfiguration::positiveAIN3negativeAGND;
+            break;
+        default:
+            this->config->mux = ADS1119MuxConfiguration::positiveAIN0negativeAGND;
+            break;
+        }
+    }
+    else if (this->mode == ADS1119InputMode::DIFFERENTIAL)
+    {
+        switch (channel)
+        {
+        case 0:
+            this->config->mux = ADS1119MuxConfiguration::positiveAIN0negativeAIN1;
+            break;
+        case 1:
+            this->config->mux = ADS1119MuxConfiguration::positiveAIN2negativeAIN3;
+            break;
+        case 2:
+            this->config->mux = ADS1119MuxConfiguration::positiveAIN1negativeAIN2;
+            break;
+        default:
+            this->config->mux = ADS1119MuxConfiguration::positiveAIN0negativeAIN1;
+            break;
+        }
+    }  
 }
 
 float ADS1119::readVoltage() 
