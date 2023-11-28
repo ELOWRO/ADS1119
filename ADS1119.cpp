@@ -102,14 +102,14 @@ void ADS1119::selectChannel(uint8_t channel)
 
 float ADS1119::readVoltage() 
 {
-    uint16_t twoBytesRead = readTwoBytes(config);
+    uint16_t twoBytesRead = readTwoBytes();
     if (twoBytesRead > 0x7FFF) 
     {
         twoBytesRead = 0x0;
     }
     uint16_t value = twoBytesRead - _offset;
-    float gain = gainAsFloat(config);
-    float referenceVoltage = referenceVoltageAsFloat(config);  
+    float gain = gainAsFloat();
+    float referenceVoltage = referenceVoltageAsFloat();  
     float voltage = referenceVoltage * (float(value) / ADS1119_RANGE) * gain;
 
     return voltage;
@@ -121,7 +121,7 @@ float ADS1119::performOffsetCalibration(ADS1119MuxConfiguration muxConfig)
 
     float totalOffset = 0;
     for (int i = 0; i <= 100; i++) {
-        totalOffset += referenceVoltageAsFloat(config) - readVoltage(config);
+        totalOffset += referenceVoltageAsFloat() - readVoltage();
         delay(10);
     }
     
