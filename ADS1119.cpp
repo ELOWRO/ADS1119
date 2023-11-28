@@ -101,13 +101,9 @@ bool ADS1119::powerDown()
 
 uint16_t ADS1119::readTwoBytes(ADS1119Configuration config) 
 {
-    // 8.5.3.6 RREG (0010 0rxx) / Page 26
-    // http://www.ti.com/lit/ds/sbas925a/sbas925a.pdf
-    uint8_t registerValue = 0B01000000;
     uint8_t value = 0x0;
-
+    // 0. Calculate conversion time
     unsigned long conversionTime;
-    
     switch (config.dataRate) 
     {
         case ADS1119Configuration::DataRate::sps20: conversionTime = 1000.0/20.0; break;
@@ -115,18 +111,23 @@ uint16_t ADS1119::readTwoBytes(ADS1119Configuration config)
         case ADS1119Configuration::DataRate::sps330: conversionTime = 1000.0/330.0; break;
         default: conversionTime = 1.0; break;
     }
-
+    // 1. Configure the device
     value |= (uint8_t(config.mux) << 5);                // XXX00000
     value |= (uint8_t(config.gain) << 4);               // 000X0000
     value |= (uint8_t(config.dataRate) << 2);           // 0000XX00
     value |= (uint8_t(config.conversionMode) << 1);     // 000000X0
     value |= (uint8_t(config.voltageReference) << 0);   // 0000000X
+    // 2. Write the respective register configuration with the WREG command
+    // 8.5.3.6 RREG (0010 0rxx) / Page 26
+    // http://www.ti.com/lit/ds/sbas925a/sbas925a.pdf
+    write(ADS1119_WREG_CMD, value);
+    // 3. Send the START/SYNC command (08h) to start converting in continuous conversion mode;
     commandStart();
-
-    write(registerValue, value);
+    // 4. Wait for an ADC Conversion
     delay(conversionTime);
+    // 5. Send the RDATA command 
     commandReadData();
-
+    // 6. Read 2 bytes of conversion data
     return read();
 }
 
@@ -134,14 +135,14 @@ bool ADS1119::commandReadData()
 {
     // 8.5.3.5 RDATA (0001 xxxx) / Page 26
     // http://www.ti.com/lit/ds/sbas925a/sbas925a.pdf
-    return writeByte(0B00010000); // 0x10
+    return writeByte(ADS1119_RDATA_CMD); 
 }
 
 bool ADS1119::commandStart()
 {
     // 8.5.3.3 START/SYNC (0000 100x) / Page 25
     // http://www.ti.com/lit/ds/sbas925a/sbas925a.pdf
-    return writeByte(0B00001000); // 0x08
+    return writeByte(ADS1119_START_SYNC_CMD);
 }
 
 uint16_t ADS1119::read()
@@ -177,7 +178,12 @@ uint8_t ADS1119::readRegister(ADS1119RegisterToRead registerToRead)
 {
     // 8.5.3.6 RREG (0010 0rxx) / Page 26
     // http://www.ti.com/lit/ds/sbas925a/sbas925a.pdf
-    uint8_t byteToWrite = 0B00100000 || (uint8_t(registerToRead) << 2);
+    /*
+    Reading a register must be performed as by using two I2C communication frames.
+    */
+
+    // 1. The first frame, the host sends the RREG command including the register address to the ADS1119.
+    uint8_t byteToWrite = ADS1119_WREG_CMD || (uint8_t(registerToRead) << 2);
     _i2c->beginTransmission(_address);
     _i2c->write(byteToWrite);
     if (_i2c->endTransmission() != 0)
@@ -186,7 +192,7 @@ uint8_t ADS1119::readRegister(ADS1119RegisterToRead registerToRead)
     }
 
     delay(1);
-
+    // 2. The second frame the ADS1119 reports the contents of the requested register.
     _i2c->requestFrom(_address, (uint8_t)1);
 
     return _i2c->read();

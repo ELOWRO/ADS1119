@@ -36,6 +36,14 @@
 #include "Arduino.h"
 #include <Wire.h>
 
+/* Commands */
+#define ADS1119_RESET_CMD (0x06)
+#define ADS1119_START_SYNC_CMD (0x08)
+#define ADS1119_POWERDOWN_CMD (0x02)
+#define ADS1119_RDATA_CMD (0x10)
+#define ADS1119_RREG_CMD (0x20)
+#define ADS1119_WREG_CMD (0x40)
+
 /** default I2C address **/
 #define ADS1119_DEFAULT_ADDRESS (0x40) // 1000000 (A0+A1=GND)
 
