@@ -39,13 +39,14 @@ ADS1119::ADS1119(uint8_t address)
     _address = address;
 }
 
-void ADS1119::begin(TwoWire *theWire) 
+void ADS1119::begin(ADS1119Configuration *config, TwoWire *theWire) 
 {
     _i2c = theWire;
     _i2c->begin();
+    this->config = config;
 }
 
-float ADS1119::readVoltage(ADS1119Configuration config) 
+float ADS1119::readVoltage() 
 {
     uint16_t twoBytesRead = readTwoBytes(config);
     if (twoBytesRead > 0x7FFF) 
@@ -60,9 +61,9 @@ float ADS1119::readVoltage(ADS1119Configuration config)
     return voltage;
 }
 
-float ADS1119::performOffsetCalibration(ADS1119Configuration config) 
+float ADS1119::performOffsetCalibration(ADS1119MuxConfiguration muxConfig) 
 {
-    config.mux = ADS1119MuxConfiguration::positiveAIN2negativeAGND;
+    config->mux = muxConfig;
 
     float totalOffset = 0;
     for (int i = 0; i <= 100; i++) {
@@ -75,14 +76,14 @@ float ADS1119::performOffsetCalibration(ADS1119Configuration config)
     return _offset;
 }
 
-float ADS1119::gainAsFloat(ADS1119Configuration config) 
+float ADS1119::gainAsFloat() 
 {
-    return uint8_t(config.gain) == uint8_t(0B0) ? 1.0 : 4.0;
+    return uint8_t(config->gain) == uint8_t(0B0) ? 1.0 : 4.0;
 }
 
-float ADS1119::referenceVoltageAsFloat(ADS1119Configuration config) 
+float ADS1119::referenceVoltageAsFloat() 
 {
-    return bool(config.voltageReference) ? config.externalReferenceVoltage : ADS1119_INTERNAL_REFERENCE_VOLTAGE;
+    return bool(config->voltageReference) ? config->externalReferenceVoltage : ADS1119_INTERNAL_REFERENCE_VOLTAGE;
 }
 
 bool ADS1119::reset() 
@@ -99,12 +100,12 @@ bool ADS1119::powerDown()
     return writeByte(0B00000010); // 0x02
 }
 
-uint16_t ADS1119::readTwoBytes(ADS1119Configuration config) 
+uint16_t ADS1119::readTwoBytes() 
 {
     uint8_t value = 0x0;
     // 0. Calculate conversion time
     unsigned long conversionTime;
-    switch (config.dataRate) 
+    switch (config->dataRate) 
     {
         case ADS1119Configuration::DataRate::sps20: conversionTime = 1000.0/20.0; break;
         case ADS1119Configuration::DataRate::sps90: conversionTime = 1000.0/90.0; break;
@@ -112,11 +113,11 @@ uint16_t ADS1119::readTwoBytes(ADS1119Configuration config)
         default: conversionTime = 1.0; break;
     }
     // 1. Configure the device
-    value |= (uint8_t(config.mux) << 5);                // XXX00000
-    value |= (uint8_t(config.gain) << 4);               // 000X0000
-    value |= (uint8_t(config.dataRate) << 2);           // 0000XX00
-    value |= (uint8_t(config.conversionMode) << 1);     // 000000X0
-    value |= (uint8_t(config.voltageReference) << 0);   // 0000000X
+    value |= (uint8_t(config->mux) << 5);                // XXX00000
+    value |= (uint8_t(config->gain) << 4);               // 000X0000
+    value |= (uint8_t(config->dataRate) << 2);           // 0000XX00
+    value |= (uint8_t(config->conversionMode) << 1);     // 000000X0
+    value |= (uint8_t(config->voltageReference) << 0);   // 0000000X
     // 2. Write the respective register configuration with the WREG command
     // 8.5.3.6 RREG (0010 0rxx) / Page 26
     // http://www.ti.com/lit/ds/sbas925a/sbas925a.pdf
