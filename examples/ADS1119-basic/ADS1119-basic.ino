@@ -17,6 +17,13 @@ void setup() {
   Serial.println("begin, reset");
 
   ads1.begin(&configuration);
+  /* Config ADS1119 Amux Input as Single Ended*/
+  ads1.configADCSingleEnded();
+  /* Select ADS1119 Channel
+  Single Ended: 4 CHANNELS => AN0, AN1, AN2, AN3
+  Differential: 3 CHANNELS => AN0-AN1, AN2-AN3, AN1-AN2, 
+  */
+  ads1.selectChannel(0); // select AN0 (single ended input mode)
   ads1.reset();
 
   Serial.println("setup done");
