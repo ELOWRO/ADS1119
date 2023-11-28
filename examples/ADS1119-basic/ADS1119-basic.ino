@@ -16,12 +16,12 @@ void setup() {
 
   Serial.println("begin, reset");
 
-  ads1.begin();
+  ads1.begin(&configuration);
   ads1.reset();
 
   Serial.println("setup done");
 }
 
 void loop() {
-   Serial.println(ads1.readVoltage(configuration), 4);
+   Serial.println(ads1.readVoltage(), 4);
 }
