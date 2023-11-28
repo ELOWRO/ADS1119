@@ -134,23 +134,23 @@ public:
 	/**
 	Begin using the library instance.
 	*/
-	void begin(TwoWire *theWire = &Wire);
+	void begin(ADS1119Configuration *config, TwoWire *theWire = &Wire);
 
 	/**
 	Will perform conversion and save it as internal offset.
 	Make sure the input being measure is at VREF!
 	*/
-	float performOffsetCalibration(ADS1119Configuration config);
+	float performOffsetCalibration(ADS1119MuxConfiguration muxConfig = ADS1119MuxConfiguration::shortedToHalvedAVDD);
 
 	/**
 	This command will save the configuration and then attempt to read two bytes, then convert it to voltage.
 	*/
-	float readVoltage(ADS1119Configuration config);
+	float readVoltage();
 
 	/**
-	This command will save the configuration and then attempt to read two bytes.
+	This command will configure the register and then attempt to read two bytes.
 	*/
-	uint16_t readTwoBytes(ADS1119Configuration config);
+	uint16_t readTwoBytes();
 	
 	/**
 	The POWERDOWN command places the device into power-down mode. 
@@ -183,10 +183,11 @@ private:
 	bool write(uint8_t registerValue, uint8_t value);
 	bool writeByte(uint8_t value);
 
-	float gainAsFloat(ADS1119Configuration config);
-	float referenceVoltageAsFloat(ADS1119Configuration config);
+	float gainAsFloat();
+	float referenceVoltageAsFloat();
 
 	uint16_t read();
+	ADS1119Configuration *config;
 };
 
 #endif
