@@ -169,6 +169,11 @@ public:
 	float readVoltage();
 
 	/**
+	This command will save the configuration and then attempt to read two bytes, then return the raw value.
+	*/
+	uint16_t readRawValue();
+
+	/**
 	This command will configure the register and then attempt to read two bytes.
 	*/
 	uint16_t readTwoBytes();
