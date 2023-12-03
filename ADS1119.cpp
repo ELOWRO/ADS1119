@@ -115,6 +115,16 @@ float ADS1119::readVoltage()
     return voltage;
 }
 
+uint16_t ADS1119::readRawValue()
+{
+    uint16_t twoBytesRead = readTwoBytes();
+    if (twoBytesRead > 0x7FFF) 
+    {
+        twoBytesRead = 0x0;
+    }
+    return (twoBytesRead - _offset);
+}
+
 float ADS1119::performOffsetCalibration(ADS1119MuxConfiguration muxConfig) 
 {
     config->mux = muxConfig;
