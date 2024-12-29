@@ -1,5 +1,7 @@
 # ADS1119 Arduino Library
 
+[![test](https://github.com/ELOWRO/ADS1119/actions/workflows/main.yml/badge.svg)](https://github.com/ELOWRO/ADS1119/actions/workflows/main.yml)
+
 # Installation
 
 ## CLI
