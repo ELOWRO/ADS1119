@@ -1,3 +1,5 @@
+name: test
+
 on: 
   push:
     branches: [ master ]
@@ -5,11 +7,28 @@ on:
     branches: [ master ]
 
 jobs:
-  windows:
+  test-matrix:
+    strategy:
+      matrix:
+        arduino-platform: ["arduino:samd", "arduino:avr"]
+        include:
+          - arduino-platform: "arduino:samd"
+            fqbn: "arduino:samd:nano_33_iot"
+          - arduino-platform: "arduino:avr"
+            fqbn: "arduino:avr:uno"
     runs-on: windows-2022
     steps:
-      - uses: arduino/compile-sketches@v1
-        with:
-          fqbn: "arduino:avr:uno"
-          libraries: |
-            - name: ADS1119
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1.0.0
+      - name: Install platform
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install ${{ matrix.arduino-platform }}
+      - name: Install ADS1119
+        run: arduino-cli lib install ADS1119 library
+      - name: Compile Sketch ADS1119-basic
+        run: arduino-cli compile --fqbn ${{ matrix.fqbn }} ./examples/ADS1119-basic
+      - name: Compile Sketch ADS1119-advanced
+        run: arduino-cli compile --fqbn ${{ matrix.fqbn }} ./examples/ADS1119-advanced

@@ -1,11 +1,11 @@
 {
-	"name": "Texas Instruments ADS11189 Library",
-	"version": "1.0.0",
+	"name": "ADS11189",
+	"version": "1.0.1",
 	"frameworks": "Arduino",
 	"license": "MIT",
 	"keywords": "ADS1119, I2C, ADC, 16-BIT",
 	"description": "Arduino library for TI ADS1119 (4ch 16-Bit Analog-to-Digital Converter).",
-	"downloadUrl": "https://github.com/ochococo",
+	"downloadUrl": "https://github.com/ELOWRO/ADS1119",
 	"authors":
 		{
 	        "name": "Oktawian Chojnacki <oktawian@elowro.com>",
@@ -14,6 +14,9 @@
 	"repository":
 		{
 		    "type": "git",
-		    "url": "https://github.com/ochococo/ADS1119" 
-		}
+		    "url": "https://github.com/ELOWRO/ADS1119" 
+		},
+	"build": {
+		"includeDir": "."
+	}
 }
