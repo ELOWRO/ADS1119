@@ -10,12 +10,14 @@ jobs:
   test-matrix:
     strategy:
       matrix:
-        arduino-platform: ["arduino:samd", "arduino:avr"]
+        arduino-platform: ["arduino:samd", "arduino:avr", "esp32:esp32"]
         include:
           - arduino-platform: "arduino:samd"
             fqbn: "arduino:samd:nano_33_iot"
           - arduino-platform: "arduino:avr"
             fqbn: "arduino:avr:uno"
+          - arduino-platform: "esp32:esp32"
+            fqbn: "esp32:esp32:esp32-poe-iso"
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
