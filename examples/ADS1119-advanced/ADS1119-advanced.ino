@@ -1,5 +1,5 @@
 #include <ADS1119.h>
-#include <avr/wdt.h>
+// #include <avr/wdt.h>
 
 ADS1119 ads1 = ADS1119(byte(0B1000001));
 
@@ -30,12 +30,12 @@ void setup() {
   // ads1.performOffsetCalibration(ADS1119MuxConfiguration::positiveAIN2negativeAGND);
   // Offset Calibration: shorting the inputs to AVDD / 2 !!!
   ads1.performOffsetCalibration(ADS1119MuxConfiguration::shortedToHalvedAVDD);
-  wdt_enable(WDTO_2S);
+  // wdt_enable(WDTO_2S);
   Serial.println("setup done");
 }
 
 void loop() {
-   wdt_reset();
-   Serial.println(ads1.readVoltage(configuration), 4);
+   //wdt_reset();
+   Serial.println(ads1.readVoltage(), 4);
    //ads.powerDown();
 }

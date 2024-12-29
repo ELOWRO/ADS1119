@@ -1,5 +1,13 @@
 # ADS1119 Arduino Library
 
+# Installation
+
+## CLI
+
+```bash
+arduino-cli lib install ADS1119
+```
+
 # Usage 
 
 ## Basic:

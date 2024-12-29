@@ -16,19 +16,21 @@ jobs:
             fqbn: "arduino:samd:nano_33_iot"
           - arduino-platform: "arduino:avr"
             fqbn: "arduino:avr:uno"
-    runs-on: windows-2022
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@master
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
       - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1.0.0
+        uses: tecolicom/actions-use-homebrew-tools@v1
+        with:
+            tools: arduino-cli
       - name: Install platform
         run: |
           arduino-cli core update-index
           arduino-cli core install ${{ matrix.arduino-platform }}
-      - name: Install ADS1119
-        run: arduino-cli lib install ADS1119 library
-      - name: Compile Sketch ADS1119-basic
-        run: arduino-cli compile --fqbn ${{ matrix.fqbn }} ./examples/ADS1119-basic
+      - name: Compile Sketch ADS1119-basic      
+        run: arduino-cli compile --fqbn ${{ matrix.fqbn }} --libraries=./ ./examples/ADS1119-basic
       - name: Compile Sketch ADS1119-advanced
-        run: arduino-cli compile --fqbn ${{ matrix.fqbn }} ./examples/ADS1119-advanced
+        run: arduino-cli compile --fqbn ${{ matrix.fqbn }} --libraries=./ ./examples/ADS1119-advanced

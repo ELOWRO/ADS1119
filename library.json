@@ -17,6 +17,6 @@
 		    "url": "https://github.com/ELOWRO/ADS1119" 
 		},
 	"build": {
-		"includeDir": "."
+		"includeDir": "./src"
 	}
 }
