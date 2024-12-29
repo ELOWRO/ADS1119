@@ -2,6 +2,12 @@
 
 [![test](https://github.com/ELOWRO/ADS1119/actions/workflows/main.yml/badge.svg)](https://github.com/ELOWRO/ADS1119/actions/workflows/main.yml)
 
+## Texas Instruments ADS1119
+
+#### 16-bit, 1kSPS, 4-ch general-purpose delta-sigma ADC with I2C interface and external Vref inputs
+
+Read more: [https://www.ti.com/product/ADS1119](https://www.ti.com/product/ADS1119)
+
 # Installation
 
 ## CLI
@@ -92,7 +98,7 @@ void setup() {
 
 void loop() {
    wdt_reset();
-   Serial.println(ads1.readVoltage(configuration), 4);
+   Serial.println(ads1.readVoltage(), 4);
    //ads.powerDown();
 }
 ```
