@@ -8,6 +8,8 @@
 
 Read more: [https://www.ti.com/product/ADS1119](https://www.ti.com/product/ADS1119)
 
+Log: [https://downloads.arduino.cc/libraries/logs/github.com/ELOWRO/ADS1119/](https://downloads.arduino.cc/libraries/logs/github.com/ELOWRO/ADS1119/)
+
 # Installation
 
 ## CLI

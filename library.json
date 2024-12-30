@@ -1,6 +1,6 @@
 {
-	"name": "ADS11189",
-	"version": "1.0.2",
+	"name": "ADS11189 library",
+	"version": "1.0.3",
 	"frameworks": "Arduino",
 	"license": "MIT",
 	"keywords": "ADS1119, I2C, ADC, 16-BIT",
