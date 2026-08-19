@@ -1,14 +1,39 @@
+# Arduino compile matrix — three cores, two example sketches each.
+#
+# Runs on the shared ELOWRO self-hosted rig (github.com/ELOWRO/ci-runners),
+# in an apple/container micro-VM on Apple silicon. That makes the host
+# aarch64 rather than x86_64, which matters here: the Arduino cores ship
+# their own host toolchains, so "does it run on arm64" is a property of each
+# core, not of arduino-cli. All three were verified to install AND compile
+# both sketches on linux/arm64 before this moved off ubuntu-latest.
+#
+# arduino-cli is installed from Arduino's own release tarball rather than via
+# Homebrew. The previous Homebrew route existed only because ubuntu-latest
+# ships it preinstalled; the runner image does not, and Linuxbrew would be a
+# few hundred MB to obtain one 20 MB binary.
+#
+# esp32:esp32 needs no additional board-manager URL — it has been carried in
+# the default index since arduino-cli 1.x.
+
 name: test
 
-on: 
+on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
+# Cancel superseded runs on the same ref. Every self-hosted job re-downloads
+# its actions from codeload, and letting an obsolete push run to completion
+# doubles that traffic for no signal — which is how this rig once hit HTTP 429.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-matrix:
     strategy:
+      fail-fast: false                            # One core failing must not hide the other two.
       matrix:
         arduino-platform: ["arduino:samd", "arduino:avr", "esp32:esp32"]
         include:
@@ -18,21 +43,21 @@ jobs:
             fqbn: "arduino:avr:uno"
           - arduino-platform: "esp32:esp32"
             fqbn: "esp32:esp32:esp32-poe-iso"
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, elowro-linux]
     steps:
       - name: Checkout
-        uses: actions/checkout@master
-      - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@master
-      - name: Setup Arduino CLI
-        uses: tecolicom/actions-use-homebrew-tools@v1
-        with:
-            tools: arduino-cli
+        uses: actions/checkout@v4                 # Was @master, which pins to a node12 action.
+      - name: Setup Arduino CLI                   # Official installer; picks Linux_ARM64 automatically.
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh \
+            | BINDIR="$HOME/.local/bin" sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Install platform
         run: |
           arduino-cli core update-index
           arduino-cli core install ${{ matrix.arduino-platform }}
-      - name: Compile Sketch ADS1119-basic      
+      - name: Compile Sketch ADS1119-basic
         run: arduino-cli compile --fqbn ${{ matrix.fqbn }} --libraries=./ ./examples/ADS1119-basic
       - name: Compile Sketch ADS1119-advanced
         run: arduino-cli compile --fqbn ${{ matrix.fqbn }} --libraries=./ ./examples/ADS1119-advanced
